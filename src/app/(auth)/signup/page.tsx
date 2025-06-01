@@ -44,7 +44,7 @@ export default function SignUp() {
         if (res.ok) {
             setLoading(false);
             toast.success(data.message);
-            route.push("/signin");
+            route.push("/verify-message");
         } else if (res.status === 400) {
             setLoading(false);
             toast.error(data.message);
@@ -53,7 +53,7 @@ export default function SignUp() {
             toast.error(data.message);
         }
 
-        
+
 
         setName("");
         setEmail("");

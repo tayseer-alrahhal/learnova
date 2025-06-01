@@ -54,7 +54,7 @@ export default function VerificationSuccessPage() {
               transition={{ delay: 0.4 }}
               className="text-[var(--color-text-secondary)] text-center"
             >
-              Your account has been activated. You can now access all features of LearnOva.
+              Your account has been activated. You can now access all features of Learnova.
             </motion.p>
             
             <motion.div 
