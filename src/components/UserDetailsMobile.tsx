@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { User, Settings } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
+import { User, LogOut } from 'lucide-react'
 
 
 export default function UserDetails() {
@@ -45,8 +45,12 @@ export default function UserDetails() {
                     </div>
                 </div>
 
-                <Link href={"/settings"} className='self-end'>
-                    <Settings className='self-end cursor-pointer' />
+                <Link
+                    href="/"
+                    className="flex items-center  text-sm text-red-500"
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                >
+                    <LogOut className="mr-2" size={20} />
                 </Link>
             </div>
         </div>
