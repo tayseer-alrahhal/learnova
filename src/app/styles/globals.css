@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Primary Colors */
+  --color-primary: #4361EE;
+  /* Royal blue - Trust, knowledge and reliability */
+  --color-primary-light: #7C96FF;
+  /* Lighter blue for hover states */
+  --color-primary-dark: #1E40AF;
+  /* Darker blue for active states */
+
+  --color-secondary: #06B6D4;
+  /* Cyan - Energy and engagement */
+  --color-secondary-light: #67E8F9;
+  /* Lighter cyan for hover states */
+
+  --color-accent: #F59E0B;
+  /* Amber - Motivation and engagement */
+  --color-accent-light: #FCD34D;
+  /* Lighter amber for hover states */
+
+  /* Backgrounds */
+  --color-background: #F8FAFC;
+  /* Very light blue-gray - Easy on eyes for reading */
+  --color-surface: #FFFFFF;
+  /* Pure white for cards and surfaces */
+  --color-surface-hover: #F1F5F9;
+  /* Slight gray for hover states */
+
+  /* Text Colors */
+  --color-text-primary: #0F172A;
+  /* Very dark blue-gray for main text */
+  --color-text-secondary: #64748B;
+  /* Medium blue-gray for secondary text */
+  --color-text-tertiary: #94A3B8;
+  /* Light blue-gray for tertiary text */
+
+  /* Functional Colors */
+  --color-success: #10B981;
+  /* Emerald green for success states */
+  --color-warning: #F59E0B;
+  /* Amber for warnings */
+  --color-error: #EF4444;
+  /* Red for errors */
+  --color-info: #3B82F6;
+  /* Blue for informational elements */
+
+  /* Dark Theme */
+  --color-dark-background: #0F172A;
+  /* Dark blue-gray background */
+  --color-dark-surface: #1E293B;
+  /* Slightly lighter surface */
+  --color-dark-surface-hover: #334155;
+  /* Hover state for surfaces */
+  --color-dark-text-primary: #F8FAFC;
+  /* Near white for primary text */
+  --color-dark-text-secondary: #CBD5E1;
+  /* Light gray for secondary text */
+  --color-dark-text-tertiary: #94A3B8;
+  /* Medium gray for tertiary text */
+}
