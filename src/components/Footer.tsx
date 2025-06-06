@@ -141,19 +141,20 @@ export default function Footer() {
                         <p className="text-[var(--color-text-secondary)] text-sm text-center mb-4">
                             Get the latest updates on new courses, teaching tips, and educational resources.
                         </p>
-                        <form className="flex gap-2">
+                        <form className="flex flex-col sm:flex-row gap-2 w-full">
                             <input
                                 type="email"
                                 placeholder="Your email address"
-                                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
                             />
                             <button
                                 type="submit"
-                                className="bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition"
+                                className="w-full sm:w-auto bg-[var(--color-primary)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-secondary)] transition"
                             >
                                 Subscribe
                             </button>
                         </form>
+
                     </div>
                 </div>
 
