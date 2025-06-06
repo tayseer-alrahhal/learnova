@@ -181,8 +181,8 @@ export default function Header() {
                                         Profile
                                     </Link>
                                     <Link
-                                        href="/profile"
-                                        className={`${isActive('/profile')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
+                                        href="/settings"
+                                        className={`${isActive('/settings')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
                                         <Settings className="mr-2" size={20} />
