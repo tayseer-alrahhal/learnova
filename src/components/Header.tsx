@@ -104,30 +104,38 @@ export default function Header() {
 
                         {/* Sidebar */}
                         <motion.div
-                            className="md:hidden fixed inset-y-0 right-0 w-3/4 w-full bg-[var(--color-surface)] shadow-xl z-50 flex flex-col"
+                            className="md:hidden fixed inset-y-0 right-0 w-full bg-[var(--color-surface)] shadow-xl z-50 flex flex-col"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'tween', duration: 0.3 }}
                         >
                             {/* Close button */}
-                            <div className="flex justify-end p-4 border-b border-gray-200">
+                            <div className="flex justify-between items-center flex-row-reverse p-4 border-b border-gray-200">
                                 <button onClick={() => setMobileMenuOpen(false)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[var(--color-text-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
-                            </div>
 
-                            {/* Brand/Logo */}
-                            <div className="p-4 border-b border-gray-200">
                                 <Link href="/" className="flex items-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
                                     <PiBooks className="text-[var(--color-primary)] text-2xl" />
                                     <span className="text-xl font-bold text-[var(--color-primary)]">
                                         Learnova
                                     </span>
                                 </Link>
+
                             </div>
+
+                            {/* Brand/Logo */}
+                            {/* <div className="p-4 border-b border-gray-200">
+                                <Link href="/" className="flex items-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
+                                    <PiBooks className="text-[var(--color-primary)] text-2xl" />
+                                    <span className="text-xl font-bold text-[var(--color-primary)]">
+                                        Learnova
+                                    </span>
+                                </Link>
+                            </div> */}
 
                             {/* Navigation */}
                             <nav className="flex-1 overflow-y-auto p-4">
