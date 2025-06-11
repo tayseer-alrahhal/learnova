@@ -7,9 +7,9 @@ import User from "@/models/User";
 import { sendEmail, generateVerificationEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
-    const { name, email, password } = await request.json();
+    const { name, email, password, role } = await request.json();
 
-    const validation = RegisterSchema.safeParse({ name, email, password });
+    const validation = RegisterSchema.safeParse({ name, email, password, role });
     if (!validation.success) {
         return NextResponse.json({ message: validation.error.errors[0].message }, { status: 400 });
     }
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
             name,
             email,
             password: hashedPassword,
+            role,
             verificationToken,
         });
         await newUser.save();
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
         // Generate verification URL
         const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${request.headers.get('x-forwarded-proto') || 'http'}://${request.headers.get('host')}`;
         const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}`;
-        
+
         // Send verification email
         await sendEmail({
             to: email,

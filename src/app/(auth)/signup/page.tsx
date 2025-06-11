@@ -17,12 +17,13 @@ export default function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const [role, setRole] = useState('student'); // Default role is student
     const route = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const user = { name, email, password };
+        const user = { name, email, password, role };
 
         const validation = RegisterSchema.safeParse(user);
         if (!validation.success) {
@@ -52,8 +53,6 @@ export default function SignUp() {
             setLoading(false);
             toast.error(data.message);
         }
-
-
 
         setName("");
         setEmail("");
@@ -131,7 +130,7 @@ export default function SignUp() {
                         </div>
                     </div>
                     <div className="relative">
-                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Confirm password</label>
+                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">Password</label>
                         <div className="relative">
                             <input
                                 value={password}
@@ -152,6 +151,25 @@ export default function SignUp() {
                             >
                                 {showPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
                             </button>
+                        </div>
+                    </div>
+                    
+                    {/* Role Selection */}
+                    <div>
+                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">I am a</label>
+                        <div className="flex space-x-4">
+                            <div 
+                                className={`flex-1 p-3 border rounded-lg cursor-pointer flex items-center justify-center transition ${role === 'student' ? 'bg-[var(--color-primary)] text-white' : 'hover:bg-gray-100'}`}
+                                onClick={() => setRole('student')}
+                            >
+                                <span className="font-medium">Student</span>
+                            </div>
+                            <div 
+                                className={`flex-1 p-3 border rounded-lg cursor-pointer flex items-center justify-center transition ${role === 'teacher' ? 'bg-[var(--color-primary)] text-white' : 'hover:bg-gray-100'}`}
+                                onClick={() => setRole('teacher')}
+                            >
+                                <span className="font-medium">Teacher</span>
+                            </div>
                         </div>
                     </div>
 
