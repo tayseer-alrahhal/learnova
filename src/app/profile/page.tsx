@@ -1,156 +1,517 @@
-"use client";
+"use client"
 
-import { useSession } from "next-auth/react";
-import { PiUser, PiGear, PiBookOpen, PiCertificate, PiChartLine } from "react-icons/pi";
-import { useState } from "react";
-import Image from "next/image";
+import type React from "react"
 
-export default function ProfilePage() {
-    const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState("overview");
+import { useState } from "react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+    Camera,
+    Mail,
+    MapPin,
+    Calendar,
+    BookOpen,
+    Edit2,
+    Save,
+    X,
+    GraduationCap,
+    Award,
+    Target,
+    Users,
+    Phone,
+} from "lucide-react"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
-    const tabs = [
-        { id: "overview", label: "Overview", icon: PiUser },
-        { id: "courses", label: "My Courses", icon: PiBookOpen },
-        { id: "progress", label: "Progress", icon: PiChartLine },
-        { id: "certificates", label: "Certificates", icon: PiCertificate },
-        { id: "settings", label: "Settings", icon: PiGear },
-    ];
+export default function Component() {
+    const [isEditing, setIsEditing] = useState(false)
+    const [name, setName] = useState("Emma Rodriguez")
+    const [studentId] = useState("STU-2024-001")
+    const [email, setEmail] = useState("emma.rodriguez@university.edu")
+    const [phone, setPhone] = useState("+1 (555) 123-4567")
+    const [bio, setBio] = useState(
+        "Computer Science major passionate about AI and machine learning. Love solving complex problems and collaborating on innovative projects.",
+    )
+    const [institution, setInstitution] = useState("Tech University")
+    const [program, setProgram] = useState("Bachelor of Computer Science")
+    const [year, setYear] = useState("3rd Year")
+    const [gpa] = useState("3.8")
+    const [location, setLocation] = useState("Boston, MA")
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [joinDate] = useState("September 2022")
+    const [avatar, setAvatar] = useState("/placeholder.svg?height=120&width=120")
+    const [role] = useState("Student")
+    const [learningGoals, setLearningGoals] = useState(
+        "Master full-stack development, Complete AI specialization, Contribute to open source projects",
+    )
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+    const [deleteConfirmation, setDeleteConfirmation] = useState("")
+    const [isDeleting, setIsDeleting] = useState(false)
+
+    const currentCourses = [
+        { name: "Software Engineering", code: "CS-350", progress: 85, grade: "A-" },
+    ]
+
+    const achievements = [
+        { title: "Dean's List", date: "Fall 2023", icon: Award },
+        { title: "Hackathon Winner", date: "March 2024", icon: Target },
+        { title: "Study Group Leader", date: "Ongoing", icon: Users },
+    ]
+
+    const handleSaveChanges = () => {
+        setIsEditing(false)
+        // In a real app, you would save the changes to a backend here
+        alert("Changes saved successfully!")
+    }
+
+    const handleCancelEdit = () => {
+        setIsEditing(false)
+        // In a real app, you might want to revert changes here
+    }
+
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onload = (e) => {
+                const newAvatar = e.target?.result as string
+                setAvatar(newAvatar)
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
+    const handleDeleteAccount = async () => {
+        setIsDeleting(true)
+    }
 
     return (
-        <div className="min-h-screen bg-[var(--color-background)] py-8 px-4">
-            <div className="max-w-7xl mx-auto">
-                {/* Profile Header */}
-                <div className="bg-[var(--color-surface)] rounded-xl shadow-lg p-6 mb-6">
-                    <div className="flex items-center space-x-4">
-                        <div className="w-20 h-20 rounded-full bg-[var(--color-primary)] flex items-center justify-center overflow-hidden">
-                            {session?.user?.image ? (
-                                <Image
-                                    src={session.user.image}
-                                    alt={`${session.user.name || 'User'}'s avatar`}
-                                    width={80}
-                                    height={80}
-                                    className="object-cover"
-                                    priority
-                                />
-                            ) : (
-                                <span className="text-3xl text-white">
-                                    {session?.user?.name?.[0]?.toUpperCase() || "U"}
-                                </span>
-                            )}
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
-                                {session?.user?.name || "User"}
-                            </h1>
-                            <p className="text-[var(--color-text-secondary)]">
-                                {session?.user?.email || "user@example.com"}
-                            </p>
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-gray-50 py-8">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="mb-8">
+                    <h1 className="text-3xl font-bold text-gray-900">Student Profile</h1>
+                    <p className="text-gray-600 mt-2">Manage your academic profile and learning preferences</p>
                 </div>
 
-                {/* Main Content */}
-                <div className="flex flex-col md:flex-row gap-6">
-                    {/* Sidebar Navigation */}
-                    <div className="w-full md:w-64 bg-[var(--color-surface)] rounded-xl shadow-lg p-4">
-                        <nav className="space-y-2">
-                            {tabs.map((tab) => {
-                                const Icon = tab.icon;
-                                return (
-                                    <button
-                                        key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
-                                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${activeTab === tab.id
-                                            ? "bg-[var(--color-primary)] text-white"
-                                            : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]"
-                                            }`}
-                                    >
-                                        <Icon size={20} />
-                                        <span>{tab.label}</span>
-                                    </button>
-                                );
-                            })}
-                        </nav>
+                <div className="grid gap-6 lg:grid-cols-3">
+                    {/* Profile Card */}
+                    <div className="lg:col-span-1 space-y-6">
+                        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                            <CardContent className="pt-6">
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="relative">
+                                        <Avatar className="h-24 w-24 border-1">
+                                            <AvatarImage src={avatar || "/placeholder.svg"} alt={name} />
+                                            <AvatarFallback className="text-lg">
+                                                {name
+                                                    .split(" ")
+                                                    .map((n) => n[0])
+                                                    .join("")}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="hidden"
+                                            id="avatar-upload"
+                                        />
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
+                                            className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+                                            onClick={() => document.getElementById("avatar-upload")?.click()}
+                                        >
+                                            <Camera className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+
+                                    <div className="mt-4 space-y-1">
+                                        <h3 className="text-xl font-semibold">{name}</h3>
+                                        <p className="text-sm text-muted-foreground">{studentId}</p>
+                                        <Badge variant="secondary" className="mt-2">
+                                            {role}
+                                        </Badge>
+                                    </div>
+
+                                    <div className="mt-6 w-full space-y-3">
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <Mail className="h-4 w-4" />
+                                            <span className="truncate">{email}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <Phone className="h-4 w-4" />
+                                            <span>{phone}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <GraduationCap className="h-4 w-4" />
+                                            <span>{institution}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <BookOpen className="h-4 w-4" />
+                                            <span>{program}</span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <Calendar className="h-4 w-4" />
+                                            <span>
+                                                {year} • GPA: {gpa}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <MapPin className="h-4 w-4" />
+                                            <span>{location}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Achievements */}
+                        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                            <CardHeader>
+                                <CardTitle className="text-lg">Achievements</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {achievements.map((achievement, index) => {
+                                    const Icon = achievement.icon
+                                    return (
+                                        <div key={index} className="flex items-center gap-3">
+                                            <div className="p-2 bg-blue-100 rounded-full">
+                                                <Icon className="h-4 w-4 text-blue-600" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-medium">{achievement.title}</p>
+                                                <p className="text-xs text-muted-foreground">{achievement.date}</p>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </CardContent>
+                        </Card>
                     </div>
 
-                    {/* Content Area */}
-                    <div className="flex-1 bg-[var(--color-surface)] rounded-xl shadow-lg p-6">
-                        {activeTab === "overview" && (
-                            <div className="space-y-6">
-                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Profile Overview</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    <div className="bg-[var(--color-surface-hover)] p-4 rounded-lg">
-                                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Enrolled Courses</h3>
-                                        <p className="text-2xl font-bold text-[var(--color-primary)]">0</p>
-                                    </div>
-                                    <div className="bg-[var(--color-surface-hover)] p-4 rounded-lg">
-                                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Completed Courses</h3>
-                                        <p className="text-2xl font-bold text-[var(--color-success)]">0</p>
-                                    </div>
-                                    <div className="bg-[var(--color-surface-hover)] p-4 rounded-lg">
-                                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Certificates</h3>
-                                        <p className="text-2xl font-bold text-[var(--color-accent)]">0</p>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === "courses" && (
-                            <div className="space-y-6">
-                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">My Courses</h2>
-                                <p className="text-[var(--color-text-secondary)]">You haven&apos;t enrolled in any courses yet.</p>
-                            </div>
-                        )}
-
-                        {activeTab === "progress" && (
-                            <div className="space-y-6">
-                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Learning Progress</h2>
-                                <p className="text-[var(--color-text-secondary)]">Your learning progress will appear here.</p>
-                            </div>
-                        )}
-
-                        {activeTab === "certificates" && (
-                            <div className="space-y-6">
-                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Certificates</h2>
-                                <p className="text-[var(--color-text-secondary)]">Your certificates will appear here.</p>
-                            </div>
-                        )}
-
-                        {activeTab === "settings" && (
-                            <div className="space-y-6">
-                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Account Settings</h2>
+                    {/* Main Content */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {/* Current Courses */}
+                        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                            <CardHeader>
+                                <CardTitle>Current Courses</CardTitle>
+                                <CardDescription>Your enrolled courses for this semester</CardDescription>
+                            </CardHeader>
+                            <CardContent>
                                 <div className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                                            Display Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                                            defaultValue={session?.user?.name || ""}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            type="email"
-                                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
-                                            defaultValue={session?.user?.email || ""}
-                                            disabled
-                                        />
-                                    </div>
-                                    <button className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition">
-                                        Save Changes
-                                    </button>
+                                    {currentCourses.map((course, index) => (
+                                        <div key={index} className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <div>
+                                                    <h4 className="font-medium">{course.name}</h4>
+                                                    <p className="text-sm text-muted-foreground">{course.code}</p>
+                                                </div>
+                                                <Badge variant="outline">{course.grade}</Badge>
+                                            </div>
+                                            <div className="space-y-1">
+                                                <div className="flex justify-between text-sm">
+                                                    <span>Progress</span>
+                                                    <span>{course.progress}%</span>
+                                                </div>
+                                                <Progress value={course.progress} className="h-2 [&>div]:bg-[var(--color-primary)]"/>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            </div>
-                        )}
+                            </CardContent>
+                        </Card>
+
+                        {/* Personal Information */}
+                        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                            <CardHeader className="flex flex-row items-center justify-between">
+                                <div>
+                                    <CardTitle>Academic Information</CardTitle>
+                                    <CardDescription>Update your academic details and preferences</CardDescription>
+                                </div>
+                                {!isEditing ? (
+                                    <Button variant="outline" onClick={() => setIsEditing(true)}>
+                                        <Edit2 className="h-4 w-4 mr-2" />
+                                        Edit
+                                    </Button>
+                                ) : (
+                                    <div className="flex gap-2">
+                                        <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                            <X className="h-4 w-4 mr-2" />
+                                            Cancel
+                                        </Button>
+                                        <Button size="sm" onClick={handleSaveChanges}>
+                                            <Save className="h-4 w-4 mr-2" />
+                                            Save
+                                        </Button>
+                                    </div>
+                                )}
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="name">Full Name</Label>
+                                        {isEditing ? (
+                                            <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                                        ) : (
+                                            <p className="text-sm py-2">{name}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="studentId">Student ID</Label>
+                                        <p className="text-sm py-2 text-muted-foreground">{studentId}</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">Email</Label>
+                                    {isEditing ? (
+                                        <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    ) : (
+                                        <p className="text-sm py-2">{email}</p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone">Phone Number</Label>
+                                    {isEditing ? (
+                                        <Input
+                                            id="phone"
+                                            type="tel"
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            placeholder="+1 (555) 123-4567"
+                                        />
+                                    ) : (
+                                        <p className="text-sm py-2">{phone}</p>
+                                    )}
+                                </div>
+
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="institution">Institution</Label>
+                                        {isEditing ? (
+                                            <Input id="institution" value={institution} onChange={(e) => setInstitution(e.target.value)} />
+                                        ) : (
+                                            <p className="text-sm py-2">{institution}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="program">Program</Label>
+                                        {isEditing ? (
+                                            <Input id="program" value={program} onChange={(e) => setProgram(e.target.value)} />
+                                        ) : (
+                                            <p className="text-sm py-2">{program}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-4 sm:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="year">Academic Year</Label>
+                                        {isEditing ? (
+                                            <Select value={year} onValueChange={(value) => setYear(value)}>
+                                                <SelectTrigger>
+                                                    <SelectValue />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="1st Year">1st Year</SelectItem>
+                                                    <SelectItem value="2nd Year">2nd Year</SelectItem>
+                                                    <SelectItem value="3rd Year">3rd Year</SelectItem>
+                                                    <SelectItem value="4th Year">4th Year</SelectItem>
+                                                    <SelectItem value="Graduate">Graduate</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        ) : (
+                                            <p className="text-sm py-2">{year}</p>
+                                        )}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="location">Location</Label>
+                                        {isEditing ? (
+                                            <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
+                                        ) : (
+                                            <p className="text-sm py-2">{location}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="bio">Bio</Label>
+                                    {isEditing ? (
+                                        <Textarea
+                                            id="bio"
+                                            rows={3}
+                                            value={bio}
+                                            onChange={(e) => setBio(e.target.value)}
+                                            placeholder="Tell us about your academic interests and goals..."
+                                        />
+                                    ) : (
+                                        <p className="text-sm py-2">{bio}</p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="learningGoals">Learning Goals</Label>
+                                    {isEditing ? (
+                                        <Textarea
+                                            id="learningGoals"
+                                            rows={3}
+                                            value={learningGoals}
+                                            onChange={(e) => setLearningGoals(e.target.value)}
+                                            placeholder="What are your learning objectives for this academic year?"
+                                        />
+                                    ) : (
+                                        <p className="text-sm py-2">{learningGoals}</p>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Learning Preferences */}
+                        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                            <CardHeader>
+                                <CardTitle>Learning Preferences</CardTitle>
+                                <CardDescription>Customize your learning experience</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-sm font-medium">Email Notifications</h4>
+                                        <p className="text-sm text-muted-foreground">Receive updates about assignments and grades</p>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        Configure
+                                    </Button>
+                                </div>
+
+                                <Separator />
+
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-sm font-medium">Study Reminders</h4>
+                                        <p className="text-sm text-muted-foreground">Get reminders for upcoming deadlines</p>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        Set Up
+                                    </Button>
+                                </div>
+
+                                <Separator />
+
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-sm font-medium">Privacy Settings</h4>
+                                        <p className="text-sm text-muted-foreground">Control who can see your academic progress</p>
+                                    </div>
+                                    <Button variant="outline" size="sm">
+                                        Manage
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Account Actions */}
+                        <Card className="border-red-200 bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                            <CardHeader>
+                                <CardTitle className="text-red-600">Account Actions</CardTitle>
+                                <CardDescription>Manage your account settings</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-sm font-medium">Withdraw from Courses</h4>
+                                        <p className="text-sm text-muted-foreground">Remove yourself from enrolled courses</p>
+                                    </div>
+                                    <Button variant="destructive" size="sm">
+                                        Manage Enrollment
+                                    </Button>
+                                </div>
+
+                                <Separator />
+
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="text-sm font-medium">Delete Account</h4>
+                                        <p className="text-sm text-muted-foreground">Permanently delete your account and all data</p>
+                                    </div>
+                                    <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="destructive" size="sm">
+                                                Delete Account
+                                            </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle className="text-red-600">Delete Account</AlertDialogTitle>
+                                                <AlertDialogDescription className="space-y-3">
+                                                    <p>
+                                                        This action cannot be undone. This will permanently delete your account and remove all your
+                                                        data from our servers.
+                                                    </p>
+                                                    <p className="font-medium">This includes:</p>
+                                                    <ul className="list-disc list-inside space-y-1 text-sm">
+                                                        <li>Your profile information and academic records</li>
+                                                        <li>Course enrollments and progress</li>
+                                                        <li>Grades and achievements</li>
+                                                        <li>All personal data and preferences</li>
+                                                    </ul>
+                                                    <div className="mt-4">
+                                                        <Label htmlFor="delete-confirmation" className="text-sm font-medium">
+                                                            Type <span className="font-bold text-red-600">DELETE</span> to confirm:
+                                                        </Label>
+                                                        <Input
+                                                            id="delete-confirmation"
+                                                            value={deleteConfirmation}
+                                                            onChange={(e) => setDeleteConfirmation(e.target.value)}
+                                                            placeholder="Type DELETE here"
+                                                            className="mt-2"
+                                                        />
+                                                    </div>
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel onClick={() => setDeleteConfirmation("")}>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    onClick={handleDeleteAccount}
+                                                    disabled={deleteConfirmation !== "DELETE" || isDeleting}
+                                                    className="bg-red-600 hover:bg-red-700"
+                                                >
+                                                    {isDeleting ? "Deleting..." : "Delete Account"}
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </div>
+
+                                <Separator />
+
+                                <div className="flex justify-end">
+                                    <Button variant="outline">Sign Out</Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
             </div>
         </div>
-    );
+    )
 }

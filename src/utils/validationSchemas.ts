@@ -14,4 +14,9 @@ export const RegisterSchema = z.object({
     role: z.enum(["student", "teacher"], {
         errorMap: () => ({ message: "Please select a valid role (student or teacher) 👨‍🎓👩‍🏫" })
     })
-}) 
+})
+
+export const UpdateProfileSchema = z.object({
+    profileImage: z.string().optional(),
+    phoneNumber: z.string().optional(),
+})

@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Montserrat, Playfair_Display } from "next/font/google";
 import './styles/globals.css';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Providers } from "./providers";
 import { Bounce, ToastContainer } from "react-toastify";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -29,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-text-primary overflow-x-hidden`}
+        className={`${montserrat.variable} ${playfairDisplay.variable} antialiased bg-background text-text-primary overflow-x-hidden`}
       >
         <Providers>
           <Header />

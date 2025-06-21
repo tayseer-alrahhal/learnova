@@ -1,228 +1,221 @@
-"use client"
-// components/Header.tsx
-import Link from 'next/link';
-import { PiBooks, PiGraduationCap, PiNotebook } from "react-icons/pi";
-import { useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
-import UserDetails from './UserDetails';
-import { motion, AnimatePresence } from 'framer-motion';
-import UserDetailsMobile from './UserDetailsMobile';
-import { Layers, MessageCircleWarning, Settings, User, Users } from 'lucide-react';
+"use client";
+import { useSession } from "next-auth/react";
+import { PiUser, PiGear, PiBookOpen, PiCertificate, PiChartLine } from "react-icons/pi";
+import { useState } from "react";
+import Image from "next/image";
 
-export default function Header() {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const pathname = usePathname();
-    const { data: session, status } = useSession();
+export default function ProfilePage() {
+    const { data: session } = useSession();
+    const [activeTab, setActiveTab] = useState("overview");
+    const [profileImage, setProfileImage] = useState(session?.user?.image || "");
+    const [phoneNumber, setPhoneNumber] = useState("");
 
-
-    const isActive = (path: string) => {
-        return pathname === path ? 'text-[var(--color-primary)]' : 'text-[var(--color-text-primary)]';
-    };
+    const tabs = [
+        { id: "overview", label: "Overview", icon: PiUser },
+        { id: "courses", label: "My Courses", icon: PiBookOpen },
+        { id: "progress", label: "Progress", icon: PiChartLine },
+        { id: "certificates", label: "Certificates", icon: PiCertificate },
+        { id: "settings", label: "Settings", icon: PiGear },
+    ];
 
     return (
-        <header className="bg-[var(--color-surface)] shadow-md sticky top-0 z-50">
-            <div className="container mx-auto flex justify-between items-center py-4 px-4 md:px-6">
-                {/* Logo */}
-                <Link href="/" className="flex items-center space-x-2">
-                    <PiBooks className="text-[var(--color-primary)] text-3xl" />
-                    <span className="text-2xl font-bold text-[var(--color-primary)]">
-                        Learnova
-                    </span>
-                </Link>
-
-                {/* Navigation - Desktop */}
-                <nav className="hidden md:flex items-center space-x-8">
-                    <Link href="/courses" className={`${isActive('/courses')} hover:text-[var(--color-primary)] font-medium transition flex items-center`}>
-                        <PiNotebook className="mr-1" />
-                        Courses
-                    </Link>
-                    <Link href="/resources" className={`${isActive('/resources')} hover:text-[var(--color-primary)] font-medium transition`}>
-                        Resources
-                    </Link>
-                    <Link href="/community" className={`${isActive('/community')} hover:text-[var(--color-primary)] font-medium transition`}>
-                        Community
-                    </Link>
-                    <Link href="/about" className={`${isActive('/about')} hover:text-[var(--color-primary)] font-medium transition`}>
-                        About
-                    </Link>
-                </nav>
-
-                {/* Buttons - Desktop */}
-                {session ? (
-                    <div className='hidden md:flex items-center space-x-4'>
-                        <UserDetails />
-                    </div>
-                ) : (
-                    status !== "loading" ? (
-                        <div className="hidden md:flex items-center space-x-4">
-                            <Link href="/signin" className="px-4 py-2 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white font-medium transition">
-                                Sign In
-                            </Link>
-                            <Link href="/signup" className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white hover:bg-[var(--color-secondary)] font-medium transition flex items-center">
-                                <PiGraduationCap className="mr-1" />
-                                Sign Up
-                            </Link>
+        <div className="min-h-screen bg-[var(--color-background)] py-8 px-4">
+            <div className="max-w-7xl mx-auto">
+                {/* Profile Header */}
+                <div className="bg-[var(--color-surface)] rounded-xl border-1 border-[var(--color-primary)] shadow-lg p-6 mb-6">
+                    <div className="flex items-center space-x-4">
+                        <div className="w-20 h-20 rounded-full bg-[var(--color-primary)] flex items-center justify-center overflow-hidden">
+                            {session?.user?.image ? (
+                                <Image
+                                    src={session.user.image}
+                                    alt={`${session.user.name || 'User'}'s avatar`}
+                                    width={80}
+                                    height={80}
+                                    className="object-cover"
+                                    priority
+                                />
+                            ) : (
+                                <span className="text-3xl text-white">
+                                    {session?.user?.name?.[0]?.toUpperCase() || "U"}
+                                </span>
+                            )}
                         </div>
-                    ) : (
                         <div>
+                            <h1 className="text-2xl font-bold text-[var(--color-text-primary)]">
+                                {session?.user?.name || "User"}
+                            </h1>
+                            <p className="text-[var(--color-text-secondary)]">
+                                {session?.user?.email || "user@example.com"}
+                            </p>
                         </div>
-                    )
-                )}
+                    </div>
+                </div>
 
-                {/* Mobile menu button */}
-                <button
-                    className="md:hidden text-[var(--color-text-primary)]"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                >
-                    {mobileMenuOpen ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    )}
-                </button>
-
-            </div>
-
-            {/* Mobile Sidebar Menu with Animation */}
-            <AnimatePresence>
-                {mobileMenuOpen && (
-                    <>
-                        {/* Overlay */}
-                        <motion.div
-                            className="md:hidden fixed inset-0 bg-black/50 z-40"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.3 }}
-                            onClick={() => setMobileMenuOpen(false)}
-                        />
-
-                        {/* Sidebar */}
-                        <motion.div
-                            className="md:hidden fixed inset-y-0 right-0 w-full bg-[var(--color-surface)] shadow-xl z-50 flex flex-col"
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: 'tween', duration: 0.3 }}
-                        >
-                            {/* Close button */}
-                            <div className="flex justify-between items-center flex-row-reverse p-4 border-b border-gray-200">
-                                <button onClick={() => setMobileMenuOpen(false)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[var(--color-text-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                </button>
-
-                                <Link href="/" className="flex items-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
-                                    <PiBooks className="text-[var(--color-primary)] text-2xl" />
-                                    <span className="text-xl font-bold text-[var(--color-primary)]">
-                                        Learnova
-                                    </span>
-                                </Link>
-
-                            </div>
-
-                            {/* Brand/Logo */}
-                            {/* <div className="p-4 border-b border-gray-200">
-                                <Link href="/" className="flex items-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
-                                    <PiBooks className="text-[var(--color-primary)] text-2xl" />
-                                    <span className="text-xl font-bold text-[var(--color-primary)]">
-                                        Learnova
-                                    </span>
-                                </Link>
-                            </div> */}
-
-                            {/* Navigation */}
-                            <nav className="flex-1 overflow-y-auto p-4">
-                                <div className="flex flex-col space-y-4">
-                                    <Link
-                                        href="/courses"
-                                        className={`${isActive('/courses')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
-                                        onClick={() => setMobileMenuOpen(false)}
+                {/* Main Content */}
+                <div className="flex flex-col md:flex-row gap-6">
+                    {/* Sidebar Navigation */}
+                    <div className="w-full md:w-64 bg-[var(--color-surface)] rounded-xl border-1 border-[var(--color-primary)] shadow-lg p-4">
+                        <nav className="space-y-2">
+                            {tabs.map((tab) => {
+                                const Icon = tab.icon;
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer ${activeTab === tab.id
+                                            ? "bg-[var(--color-primary)] text-white"
+                                            : "text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-hover)]"
+                                            }`}
                                     >
-                                        <PiNotebook className="mr-2" size={20} />
-                                        Courses
-                                    </Link>
-                                    <Link
-                                        href="/resources"
-                                        className={`${isActive('/resources')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        <Layers className="mr-2" size={20} />
-                                        Resources
-                                    </Link>
-                                    <Link
-                                        href="/community"
-                                        className={`${isActive('/community')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        <Users className="mr-2" size={20} />
-                                        Community
-                                    </Link>
-                                    <Link
-                                        href="/about"
-                                        className={`${isActive('/about')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        <MessageCircleWarning className="mr-2" size={20} />
-                                        About
-                                    </Link>
-                                    <Link
-                                        href="/profile"
-                                        className={`${isActive('/profile')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        <User className="mr-2" size={20} />
-                                        Profile
-                                    </Link>
-                                    <Link
-                                        href="/settings"
-                                        className={`${isActive('/settings')} hover:text-[var(--color-primary)] font-medium transition flex items-center p-2 rounded-lg hover:bg-gray-100`}
-                                        onClick={() => setMobileMenuOpen(false)}
-                                    >
-                                        <Settings className="mr-2" size={20} />
-                                        Settings
-                                    </Link>
-                                </div>
-                            </nav>
+                                        <Icon size={20} />
+                                        <span>{tab.label}</span>
+                                    </button>
+                                );
+                            })}
+                        </nav>
+                    </div>
 
-                            {/* Auth Buttons */}
-                            <div className="p-4 border-t border-gray-200">
-                                {session ? (
-                                    <div className="py-2">
-                                        <UserDetailsMobile />
+                    {/* Content Area */}
+                    <div className="flex-1 bg-[var(--color-surface)] rounded-xl border-1 border-[var(--color-primary)] shadow-lg p-6">
+                        {activeTab === "overview" && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Profile Overview</h2>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <div className="bg-[var(--color-surface-hover)] p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Enrolled Courses</h3>
+                                        <p className="text-2xl font-bold text-[var(--color-primary)]">0</p>
                                     </div>
-                                ) : (
-                                    status !== "loading" && (
-                                        <div className="flex flex-col space-y-2">
-                                            <Link
-                                                href="/signin"
-                                                className="px-4 py-2 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] text-center hover:bg-[var(--color-primary)] hover:text-white transition"
-                                                onClick={() => setMobileMenuOpen(false)}
-                                            >
-                                                Sign In
-                                            </Link>
-                                            <Link
-                                                href="/signup"
-                                                className="px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white text-center hover:bg-[var(--color-secondary)] transition flex items-center justify-center"
-                                                onClick={() => setMobileMenuOpen(false)}
-                                            >
-                                                <PiGraduationCap className="mr-1" />
-                                                Sign Up
-                                            </Link>
-                                        </div>
-                                    )
-                                )}
+                                    <div className="bg-[var(--color-surface-hover)] p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Completed Courses</h3>
+                                        <p className="text-2xl font-bold text-[var(--color-success)]">0</p>
+                                    </div>
+                                    <div className="bg-[var(--color-surface-hover)] p-4 rounded-lg">
+                                        <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Certificates</h3>
+                                        <p className="text-2xl font-bold text-[var(--color-accent)]">0</p>
+                                    </div>
+                                </div>
                             </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
-        </header>
+                        )}
+
+                        {activeTab === "courses" && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">My Courses</h2>
+                                <p className="text-[var(--color-text-secondary)]">You haven&apos;t enrolled in any courses yet.</p>
+                            </div>
+                        )}
+
+                        {activeTab === "progress" && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Learning Progress</h2>
+                                <p className="text-[var(--color-text-secondary)]">Your learning progress will appear here.</p>
+                            </div>
+                        )}
+
+                        {activeTab === "certificates" && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Certificates</h2>
+                                <p className="text-[var(--color-text-secondary)]">Your certificates will appear here.</p>
+                            </div>
+                        )}
+
+                        {activeTab === "settings" && (
+                            <div className="space-y-6">
+                                <h2 className="text-xl font-bold text-[var(--color-text-primary)]">Account Settings</h2>
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                                            Display Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                                            defaultValue={session?.user?.name || ""}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                                            Email Address
+                                        </label>
+                                        <input
+                                            type="email"
+                                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                                            defaultValue={session?.user?.email || ""}
+                                            disabled
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                                            Phone Number
+                                        </label>
+                                        <input
+                                            type="tel"
+                                            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+                                            value={phoneNumber}
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            placeholder="Enter your phone number"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1">
+                                            Profile Photo
+                                        </label>
+                                        <div className="flex items-center space-x-4">
+                                            <div className="w-20 h-20 rounded-full bg-[var(--color-primary)] flex items-center justify-center overflow-hidden">
+                                                {profileImage ? (
+                                                    <Image
+                                                        src={profileImage}
+                                                        alt="Profile photo"
+                                                        width={80}
+                                                        height={80}
+                                                        className="object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-3xl text-white">
+                                                        {session?.user?.name?.[0]?.toUpperCase() || "U"}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col space-y-2">
+                                                <label className="px-4 py-2 bg-[var(--color-surface-hover)] text-[var(--color-text-primary)] rounded-lg cursor-pointer hover:bg-[var(--color-primary)] hover:text-white transition">
+                                                    <span>Upload New Photo</span>
+                                                    <input
+                                                        type="file"
+                                                        className="hidden"
+                                                        accept="image/*"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0];
+                                                            if (file) {
+                                                                const reader = new FileReader();
+                                                                reader.onload = (e) => {
+                                                                    setProfileImage(e.target?.result as string);
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            }
+                                                        }}
+                                                    />
+                                                </label>
+                                                {profileImage && profileImage !== session?.user?.image && (
+                                                    <button
+                                                        onClick={() => setProfileImage(session?.user?.image || "")}
+                                                        className="px-4 py-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition"
+                                                    >
+                                                        Reset to Default
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg cursor-pointer hover:bg-[var(--color-primary-dark)] transition"
+                                    >
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }

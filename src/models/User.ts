@@ -7,6 +7,8 @@ interface IUser extends Document {
     email: string;
     password?: string;
     role: string;
+    profileImage?: string;
+    phoneNumber?: string;
     verificationToken: string;
     isVerified: boolean;
 }
@@ -16,6 +18,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: false },
     role: { type: String, required: true },
+    profileImage: { type: String, required: false },
+    phoneNumber: { type: String, required: false },
     verificationToken: { type: String },
     isVerified: { type: Boolean, default: false },
 });

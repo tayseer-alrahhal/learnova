@@ -21,7 +21,7 @@ export default function Header() {
     };
 
     return (
-        <header className="bg-[var(--color-surface)] shadow-md sticky top-0 z-50">
+        <header className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10 shadow-md sticky top-0 z-50">
             <div className="container mx-auto flex justify-between items-center py-4 px-4 md:px-6">
                 {/* Logo */}
                 <Link href="/" className="flex items-center space-x-2">
