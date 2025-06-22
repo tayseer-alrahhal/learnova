@@ -5,6 +5,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Providers } from "./providers";
 import { Bounce, ToastContainer } from "react-toastify";
+import BackgroundStyles from "@/components/background-styles";
+import AnimatedBackground from "@/components/animated-background";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -31,12 +33,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserrat.variable} ${playfairDisplay.variable} antialiased bg-background text-text-primary overflow-x-hidden`}
+        className={`${montserrat.variable} ${playfairDisplay.variable} antialiased bg-background text-text-primary`}
       >
         <Providers>
           <Header />
 
           <main>
+            <BackgroundStyles />
+            <AnimatedBackground />
             {children}
           </main>
 

@@ -104,7 +104,7 @@ export default function Header() {
 
                         {/* Sidebar */}
                         <motion.div
-                            className="md:hidden fixed inset-y-0 right-0 w-full bg-[var(--color-surface)] shadow-xl z-50 flex flex-col"
+                            className="md:hidden fixed inset-y-0 right-0 w-full bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10 shadow-xl z-50 flex flex-col"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}

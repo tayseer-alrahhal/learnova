@@ -32,7 +32,7 @@ export default function UserDetails() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-center rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hover:opacity-90 transition-all duration-200 cursor-pointer"
+                className=" flex items-center justify-center rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hover:opacity-90 transition-all duration-200 cursor-pointer"
                 disabled={isLoading}
                 aria-label="User menu"
             >
