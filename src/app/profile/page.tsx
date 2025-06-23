@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,7 +17,6 @@ import {
     Camera,
     Mail,
     MapPin,
-    Calendar,
     BookOpen,
     Edit2,
     Save,
@@ -39,31 +38,38 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { toast } from "react-toastify"
 
 export default function Component() {
+
+
     const [isEditing, setIsEditing] = useState(false)
-    const [name, setName] = useState("Emma Rodriguez")
-    const [studentId] = useState("STU-2024-001")
-    const [email, setEmail] = useState("emma.rodriguez@university.edu")
-    const [phone, setPhone] = useState("+1 (555) 123-4567")
-    const [bio, setBio] = useState(
-        "Computer Science major passionate about AI and machine learning. Love solving complex problems and collaborating on innovative projects.",
-    )
-    const [institution, setInstitution] = useState("Tech University")
-    const [program, setProgram] = useState("Bachelor of Computer Science")
-    const [year, setYear] = useState("3rd Year")
-    const [gpa] = useState("3.8")
-    const [location, setLocation] = useState("Boston, MA")
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [joinDate] = useState("September 2022")
-    const [avatar, setAvatar] = useState("/placeholder.svg?height=120&width=120")
-    const [role] = useState("Student")
-    const [learningGoals, setLearningGoals] = useState(
-        "Master full-stack development, Complete AI specialization, Contribute to open source projects",
-    )
+    const [name, setName] = useState<string>("")
+    const [studentId, setStudentId] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
+    const [phone, setPhone] = useState<string>("")
+    const [bio, setBio] = useState<string>()
+    const [institution, setInstitution] = useState<string>("")
+    const [program, setProgram] = useState<string>("")
+    const [role, setRole] = useState<string>("")
+    const [location, setLocation] = useState<string>("")
+    const [avatar, setAvatar] = useState<string>("")
+
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState("")
     const [isDeleting, setIsDeleting] = useState(false)
+
+    const updateData = {
+        name,
+        role,
+        studentId,
+        phone,
+        bio,
+        institution,
+        program,
+        location,
+        avatar,
+    }
 
     const currentCourses = [
         { name: "Software Engineering", code: "CS-350", progress: 85, grade: "A-" },
@@ -75,10 +81,49 @@ export default function Component() {
         { title: "Study Group Leader", date: "Ongoing", icon: Users },
     ]
 
-    const handleSaveChanges = () => {
+    useEffect(() => {
+        const getUserDAta = async () => {
+            const res = await fetch("api/user/user-data");
+            if (!res.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+            const data = await res.json();
+            setStudentId(data._id)
+            setName(data.name)
+            setEmail(data.email)
+            setPhone(data.phone)
+            setBio(data.bio)
+            setInstitution(data.institution)
+            setProgram(data.program)
+            setRole(data.role)
+            setLocation(data.location)
+            setAvatar(data.avatar)
+        }
+        getUserDAta()
+    }, []);
+
+    const handleSaveChanges = async () => {
         setIsEditing(false)
-        // In a real app, you would save the changes to a backend here
-        alert("Changes saved successfully!")
+        const res = await fetch("/api/user/update-profile", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updateData)
+        });
+
+        const data = await res.json();
+
+        console.log("Response status:", res.status);
+        console.log("Response data:", data);
+
+        if (res.ok) {
+            toast.success(data.message);
+        } else if (res.status === 400) {
+            toast.error(data.message);
+        } else if (res.status === 500) {
+            toast.error(data.message);
+        }
     }
 
     const handleCancelEdit = () => {
@@ -170,12 +215,6 @@ export default function Component() {
                                             <span>{program}</span>
                                         </div>
                                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <Calendar className="h-4 w-4" />
-                                            <span>
-                                                {year} • GPA: {gpa}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                             <MapPin className="h-4 w-4" />
                                             <span>{location}</span>
                                         </div>
@@ -232,7 +271,7 @@ export default function Component() {
                                                     <span>Progress</span>
                                                     <span>{course.progress}%</span>
                                                 </div>
-                                                <Progress value={course.progress} className="h-2 [&>div]:bg-[var(--color-primary)]"/>
+                                                <Progress value={course.progress} className="h-2 [&>div]:bg-[var(--color-primary)]" />
                                             </div>
                                         </div>
                                     ))}
@@ -326,22 +365,19 @@ export default function Component() {
 
                                 <div className="grid gap-4 sm:grid-cols-2">
                                     <div className="space-y-2">
-                                        <Label htmlFor="year">Academic Year</Label>
+                                        <Label htmlFor="year">I am a</Label>
                                         {isEditing ? (
-                                            <Select value={year} onValueChange={(value) => setYear(value)}>
+                                            <Select value={role} onValueChange={(value) => setRole(value)}>
                                                 <SelectTrigger>
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="1st Year">1st Year</SelectItem>
-                                                    <SelectItem value="2nd Year">2nd Year</SelectItem>
-                                                    <SelectItem value="3rd Year">3rd Year</SelectItem>
-                                                    <SelectItem value="4th Year">4th Year</SelectItem>
-                                                    <SelectItem value="Graduate">Graduate</SelectItem>
+                                                    <SelectItem value="Student">Student</SelectItem>
+                                                    <SelectItem value="Teacher">Teacher</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         ) : (
-                                            <p className="text-sm py-2">{year}</p>
+                                            <p className="text-sm py-2">{role}</p>
                                         )}
                                     </div>
                                     <div className="space-y-2">
@@ -366,21 +402,6 @@ export default function Component() {
                                         />
                                     ) : (
                                         <p className="text-sm py-2">{bio}</p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="learningGoals">Learning Goals</Label>
-                                    {isEditing ? (
-                                        <Textarea
-                                            id="learningGoals"
-                                            rows={3}
-                                            value={learningGoals}
-                                            onChange={(e) => setLearningGoals(e.target.value)}
-                                            placeholder="What are your learning objectives for this academic year?"
-                                        />
-                                    ) : (
-                                        <p className="text-sm py-2">{learningGoals}</p>
                                     )}
                                 </div>
                             </CardContent>

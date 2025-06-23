@@ -16,7 +16,15 @@ export const RegisterSchema = z.object({
     })
 })
 
+
 export const UpdateProfileSchema = z.object({
-    profileImage: z.string().optional(),
-    phoneNumber: z.string().optional(),
-})
+  name: z.string().min(2, "Name must be at least 2 characters").optional(),
+  role: z.string().optional(),
+  studentId: z.string().optional(),
+  phone: z.string().optional(),
+  bio: z.string().optional(),
+  institution: z.string().optional(),
+  program: z.string().optional(),
+  location: z.string().optional(),
+  avatar: z.string().optional(),
+});

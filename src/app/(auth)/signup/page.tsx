@@ -17,7 +17,7 @@ export default function SignUp() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
-    const [role, setRole] = useState('student'); // Default role is student
+    const [role, setRole] = useState('student');
     const route = useRouter()
 
     const handleSubmit = async (e: React.FormEvent) => {
