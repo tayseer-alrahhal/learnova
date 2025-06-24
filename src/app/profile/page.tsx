@@ -39,6 +39,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "react-toastify"
+import { signOut } from "next-auth/react"
 
 export default function Component() {
 
@@ -54,6 +55,7 @@ export default function Component() {
     const [role, setRole] = useState<string>("")
     const [location, setLocation] = useState<string>("")
     const [avatar, setAvatar] = useState<string>("")
+    console.log(role.slice(0, 3).toLocaleUpperCase())
 
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState("")
@@ -70,6 +72,7 @@ export default function Component() {
         location,
         avatar,
     }
+
 
     const currentCourses = [
         { name: "Software Engineering", code: "CS-350", progress: 85, grade: "A-" },
@@ -128,7 +131,6 @@ export default function Component() {
 
     const handleCancelEdit = () => {
         setIsEditing(false)
-        // In a real app, you might want to revert changes here
     }
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,6 +147,16 @@ export default function Component() {
 
     const handleDeleteAccount = async () => {
         setIsDeleting(true)
+        const res = await fetch(`/api/user/${studentId}`, {
+            method: "DELETE",
+        });
+
+        if (!res.ok) {
+            toast.error("Failed to delete user");
+        } else {
+            toast.success("User deleted successfully");
+            await signOut({ callbackUrl: "/" });
+        }
     }
 
     return (
@@ -512,7 +524,7 @@ export default function Component() {
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel onClick={() => setDeleteConfirmation("")}>Cancel</AlertDialogCancel>
                                                 <AlertDialogAction
-                                                    onClick={handleDeleteAccount}
+                                                    onClick={() => handleDeleteAccount()}
                                                     disabled={deleteConfirmation !== "DELETE" || isDeleting}
                                                     className="bg-red-600 hover:bg-red-700"
                                                 >
