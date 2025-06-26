@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
         const user = await User.findOneAndUpdate(
             { email: session.user.email },
-            { $set: { name, role, studentId, phone, bio, institution, program, location, avatar } },
+            { $set: { name, role, studentId, phone, bio, institution, program, location, avatar, updatedAt: new Date() }, },
             { new: true }
         );
 

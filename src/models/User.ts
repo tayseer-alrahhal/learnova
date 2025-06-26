@@ -33,6 +33,8 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
     program: { type: String },
     location: { type: String },
     avatar: { type: String },
+}, {
+    timestamps: true,
 });
 
 const User: Model<IUser> = mongoose.models.User || mongoose.model("User", userSchema);

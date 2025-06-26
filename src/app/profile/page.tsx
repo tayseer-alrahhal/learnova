@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
     Camera,
     Mail,
@@ -42,8 +43,6 @@ import { toast } from "react-toastify"
 import { signOut } from "next-auth/react"
 
 export default function Component() {
-
-
     const [isEditing, setIsEditing] = useState(false)
     const [name, setName] = useState<string>("")
     const [studentId, setStudentId] = useState<string>("")
@@ -55,11 +54,12 @@ export default function Component() {
     const [role, setRole] = useState<string>("")
     const [location, setLocation] = useState<string>("")
     const [avatar, setAvatar] = useState<string>("")
-    console.log(role.slice(0, 3).toLocaleUpperCase())
+    const [joined, setJoined] = useState<string>("")
 
     const [showDeleteDialog, setShowDeleteDialog] = useState(false)
     const [deleteConfirmation, setDeleteConfirmation] = useState("")
     const [isDeleting, setIsDeleting] = useState(false)
+    const [loading, setLoading] = useState(true)
 
     const updateData = {
         name,
@@ -73,10 +73,7 @@ export default function Component() {
         avatar,
     }
 
-
-    const currentCourses = [
-        { name: "Software Engineering", code: "CS-350", progress: 85, grade: "A-" },
-    ]
+    const currentCourses = [{ name: "Software Engineering", code: "CS-350", progress: 85, grade: "A-" }]
 
     const achievements = [
         { title: "Dean's List", date: "Fall 2023", icon: Award },
@@ -86,11 +83,11 @@ export default function Component() {
 
     useEffect(() => {
         const getUserDAta = async () => {
-            const res = await fetch("api/user/user-data");
+            const res = await fetch("api/user/user-data")
             if (!res.ok) {
-                throw new Error("Failed to fetch user data");
+                throw new Error("Failed to fetch user data")
             }
-            const data = await res.json();
+            const data = await res.json()
             setStudentId(data._id)
             setName(data.name)
             setEmail(data.email)
@@ -101,31 +98,32 @@ export default function Component() {
             setRole(data.role)
             setLocation(data.location)
             setAvatar(data.avatar)
+            setJoined(data.createdAt)
         }
-        getUserDAta()
-    }, []);
+        getUserDAta().then(() => setLoading(false))
+    }, [])
 
     const handleSaveChanges = async () => {
         setIsEditing(false)
         const res = await fetch("/api/user/update-profile", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(updateData)
-        });
+            body: JSON.stringify(updateData),
+        })
 
-        const data = await res.json();
+        const data = await res.json()
 
-        console.log("Response status:", res.status);
-        console.log("Response data:", data);
+        console.log("Response status:", res.status)
+        console.log("Response data:", data)
 
         if (res.ok) {
-            toast.success(data.message);
+            toast.success(data.message)
         } else if (res.status === 400) {
-            toast.error(data.message);
+            toast.error(data.message)
         } else if (res.status === 500) {
-            toast.error(data.message);
+            toast.error(data.message)
         }
     }
 
@@ -149,14 +147,229 @@ export default function Component() {
         setIsDeleting(true)
         const res = await fetch(`/api/user/${studentId}`, {
             method: "DELETE",
-        });
+        })
 
         if (!res.ok) {
-            toast.error("Failed to delete user");
+            toast.error("Failed to delete user")
         } else {
-            toast.success("User deleted successfully");
-            await signOut({ callbackUrl: "/" });
+            toast.success("User deleted successfully")
+            await signOut({ callbackUrl: "/" })
         }
+        setIsDeleting(false)
+    }
+
+    // Profile Card Skeleton
+    const ProfileCardSkeleton = () => (
+        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+            <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                    <div className="relative">
+                        <Skeleton className="h-24 w-24 rounded-full" />
+                        <Skeleton className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full" />
+                    </div>
+
+                    <div className="mt-4 space-y-2 w-full flex flex-col items-center">
+                        <Skeleton className="h-6 w-32" />
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-6 w-16 rounded-full" />
+                    </div>
+
+                    <div className="mt-6 w-full space-y-3">
+                        {[...Array(5)].map((_, i) => (
+                            <div key={i} className="flex items-center gap-2">
+                                <Skeleton className="h-4 w-4" />
+                                <Skeleton className="h-4 flex-1" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    )
+
+    // Achievements Skeleton
+    const AchievementsSkeleton = () => (
+        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+            <CardHeader>
+                <Skeleton className="h-6 w-24" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-1 flex-1">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-16" />
+                        </div>
+                    </div>
+                ))}
+            </CardContent>
+        </Card>
+    )
+
+    // Current Courses Skeleton
+    const CoursesSkeleton = () => (
+        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+            <CardHeader>
+                <Skeleton className="h-6 w-32" />
+                <Skeleton className="h-4 w-48" />
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    {[...Array(1)].map((_, i) => (
+                        <div key={i} className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <div className="space-y-1">
+                                    <Skeleton className="h-5 w-40" />
+                                    <Skeleton className="h-4 w-16" />
+                                </div>
+                                <Skeleton className="h-6 w-8 rounded-full" />
+                            </div>
+                            <div className="space-y-1">
+                                <div className="flex justify-between">
+                                    <Skeleton className="h-4 w-16" />
+                                    <Skeleton className="h-4 w-8" />
+                                </div>
+                                <Skeleton className="h-2 w-full rounded-full" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    )
+
+    // Academic Information Skeleton
+    const AcademicInfoSkeleton = () => (
+        <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div className="space-y-1">
+                    <Skeleton className="h-6 w-40" />
+                    <Skeleton className="h-4 w-56" />
+                </div>
+                <Skeleton className="h-9 w-16" />
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-12" />
+                    <Skeleton className="h-4 w-full" />
+                </div>
+
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-full" />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-12" />
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                    <div className="space-y-2">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-full" />
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Skeleton className="h-4 w-8" />
+                    <Skeleton className="h-16 w-full" />
+                </div>
+            </CardContent>
+        </Card>
+    )
+
+    if (loading) {
+        return (
+            <div className="min-h-screen py-8">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Header */}
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900">Student Profile</h1>
+                        <p className="text-gray-600 mt-2">Manage your academic profile and learning preferences</p>
+                    </div>
+
+                    <div className="grid gap-6 lg:grid-cols-3">
+                        {/* Profile Card Skeleton */}
+                        <div className="lg:col-span-1 space-y-6">
+                            <ProfileCardSkeleton />
+                            <AchievementsSkeleton />
+                        </div>
+
+                        {/* Main Content Skeleton */}
+                        <div className="lg:col-span-2 space-y-6">
+                            <CoursesSkeleton />
+                            <AcademicInfoSkeleton />
+
+                            {/* Learning Preferences Skeleton */}
+                            <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                                <CardHeader>
+                                    <Skeleton className="h-6 w-36" />
+                                    <Skeleton className="h-4 w-48" />
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {[...Array(3)].map((_, i) => (
+                                        <div key={i}>
+                                            <div className="flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <Skeleton className="h-4 w-32" />
+                                                    <Skeleton className="h-3 w-48" />
+                                                </div>
+                                                <Skeleton className="h-8 w-20" />
+                                            </div>
+                                            {i < 2 && <Separator className="mt-4" />}
+                                        </div>
+                                    ))}
+                                </CardContent>
+                            </Card>
+
+                            {/* Account Actions Skeleton */}
+                            <Card className="border-red-200 bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">
+                                <CardHeader>
+                                    <Skeleton className="h-6 w-32" />
+                                    <Skeleton className="h-4 w-40" />
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="space-y-1">
+                                            <Skeleton className="h-4 w-28" />
+                                            <Skeleton className="h-3 w-56" />
+                                        </div>
+                                        <Skeleton className="h-8 w-24" />
+                                    </div>
+                                    <Separator />
+                                    <div className="flex justify-end">
+                                        <Skeleton className="h-9 w-20" />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -194,7 +407,7 @@ export default function Component() {
                                         <Button
                                             size="sm"
                                             variant="outline"
-                                            className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+                                            className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0 cursor-pointer"
                                             onClick={() => document.getElementById("avatar-upload")?.click()}
                                         >
                                             <Camera className="h-4 w-4" />
@@ -203,7 +416,7 @@ export default function Component() {
 
                                     <div className="mt-4 space-y-1">
                                         <h3 className="text-xl font-semibold">{name}</h3>
-                                        <p className="text-sm text-muted-foreground">{studentId}</p>
+                                        <p className="text-sm text-muted-foreground">{`Joined in ${joined.slice(0, 10).split("-").reverse().join("-")}`}</p>
                                         <Badge variant="secondary" className="mt-2">
                                             {role}
                                         </Badge>
@@ -299,17 +512,17 @@ export default function Component() {
                                     <CardDescription>Update your academic details and preferences</CardDescription>
                                 </div>
                                 {!isEditing ? (
-                                    <Button variant="outline" onClick={() => setIsEditing(true)}>
+                                    <Button className="cursor-pointer" variant="outline" onClick={() => setIsEditing(true)}>
                                         <Edit2 className="h-4 w-4 mr-2" />
                                         Edit
                                     </Button>
                                 ) : (
                                     <div className="flex gap-2">
-                                        <Button variant="outline" size="sm" onClick={handleCancelEdit}>
+                                        <Button className="cursor-pointer" variant="outline" size="sm" onClick={handleCancelEdit}>
                                             <X className="h-4 w-4 mr-2" />
                                             Cancel
                                         </Button>
-                                        <Button size="sm" onClick={handleSaveChanges}>
+                                        <Button className="cursor-pointer" size="sm" onClick={handleSaveChanges}>
                                             <Save className="h-4 w-4 mr-2" />
                                             Save
                                         </Button>
@@ -431,7 +644,7 @@ export default function Component() {
                                         <h4 className="text-sm font-medium">Email Notifications</h4>
                                         <p className="text-sm text-muted-foreground">Receive updates about assignments and grades</p>
                                     </div>
-                                    <Button variant="outline" size="sm">
+                                    <Button className="cursor-pointer" variant="outline" size="sm">
                                         Configure
                                     </Button>
                                 </div>
@@ -443,7 +656,7 @@ export default function Component() {
                                         <h4 className="text-sm font-medium">Study Reminders</h4>
                                         <p className="text-sm text-muted-foreground">Get reminders for upcoming deadlines</p>
                                     </div>
-                                    <Button variant="outline" size="sm">
+                                    <Button className="cursor-pointer" variant="outline" size="sm">
                                         Set Up
                                     </Button>
                                 </div>
@@ -455,7 +668,7 @@ export default function Component() {
                                         <h4 className="text-sm font-medium">Privacy Settings</h4>
                                         <p className="text-sm text-muted-foreground">Control who can see your academic progress</p>
                                     </div>
-                                    <Button variant="outline" size="sm">
+                                    <Button className="cursor-pointer" variant="outline" size="sm">
                                         Manage
                                     </Button>
                                 </div>
@@ -471,24 +684,12 @@ export default function Component() {
                             <CardContent className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <h4 className="text-sm font-medium">Withdraw from Courses</h4>
-                                        <p className="text-sm text-muted-foreground">Remove yourself from enrolled courses</p>
-                                    </div>
-                                    <Button variant="destructive" size="sm">
-                                        Manage Enrollment
-                                    </Button>
-                                </div>
-
-                                <Separator />
-
-                                <div className="flex items-center justify-between">
-                                    <div>
                                         <h4 className="text-sm font-medium">Delete Account</h4>
                                         <p className="text-sm text-muted-foreground">Permanently delete your account and all data</p>
                                     </div>
                                     <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
                                         <AlertDialogTrigger asChild>
-                                            <Button variant="destructive" size="sm">
+                                            <Button className="cursor-pointer" variant="destructive" size="sm">
                                                 Delete Account
                                             </Button>
                                         </AlertDialogTrigger>
@@ -538,7 +739,9 @@ export default function Component() {
                                 <Separator />
 
                                 <div className="flex justify-end">
-                                    <Button variant="outline">Sign Out</Button>
+                                    <Button className="cursor-pointer" onClick={() => signOut({ callbackUrl: "/" })} variant="outline">
+                                        Sign Out
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
