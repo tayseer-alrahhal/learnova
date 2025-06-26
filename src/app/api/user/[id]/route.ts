@@ -1,14 +1,18 @@
+
 import User from "@/models/User";
 import connectToDatabase from "@/lib/db";
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
-    const userId = params.id;
-    console.log("User ID to delete:", userId);
+type UserProps = {
+    params: Promise<{ id: string }>;
+}
+
+export async function DELETE(req: Request, { params }: UserProps) {
+    const { id } = await params;
 
     await connectToDatabase();
 
     try {
-        const deletedUser = await User.findByIdAndDelete(userId);
+        const deletedUser = await User.findByIdAndDelete(id);
 
         if (!deletedUser) {
             return new Response("User not found", { status: 404 });
