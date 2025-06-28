@@ -20,13 +20,13 @@ export default function MouseMove() {
         <div>
             {/* Interactive Cursor */}
             <motion.div
-                className="max-md:hidden fixed w-8 h-8 border-2 border-[var(--color-primary)] rounded-full pointer-events-none z-50"
+                className="max-md:hidden fixed w-10 h-10 border-2 border-[var(--color-primary)] rounded-full pointer-events-none z-50"
                 style={{
                     left: mousePosition.x - 16,
                     top: mousePosition.y - 16,
                 }}
                 animate={{ scale: [1, 1.2, 1] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
             />
         </div>
     )
