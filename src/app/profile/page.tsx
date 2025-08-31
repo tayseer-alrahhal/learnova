@@ -15,7 +15,6 @@ import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
-    Camera,
     Mail,
     MapPin,
     BookOpen,
@@ -41,6 +40,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast } from "react-toastify"
 import { signOut } from "next-auth/react"
+import AvatarUpload from "@/components/AvatarUpload"
+
+
 
 export default function Component() {
     const [isEditing, setIsEditing] = useState(false)
@@ -129,18 +131,6 @@ export default function Component() {
 
     const handleCancelEdit = () => {
         setIsEditing(false)
-    }
-
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onload = (e) => {
-                const newAvatar = e.target?.result as string
-                setAvatar(newAvatar)
-            }
-            reader.readAsDataURL(file)
-        }
     }
 
     const handleDeleteAccount = async () => {
@@ -397,22 +387,8 @@ export default function Component() {
                                                     .join("")}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            className="hidden"
-                                            id="avatar-upload"
-                                        />
-                                        <Button
-                                            size="sm"
-                                            variant="outline"
-                                            className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0 cursor-pointer"
-                                            onClick={() => document.getElementById("avatar-upload")?.click()}
-                                        >
-                                            <Camera className="h-4 w-4" />
-                                        </Button>
                                     </div>
+
 
                                     <div className="mt-4 space-y-1">
                                         <h3 className="text-xl font-semibold">{name}</h3>
@@ -631,6 +607,8 @@ export default function Component() {
                                 </div>
                             </CardContent>
                         </Card>
+
+                        <AvatarUpload />
 
                         {/* Learning Preferences */}
                         <Card className="bg-gradient-to-br from-[var(--color-background)] to-[var(--color-primary-light)]/10">

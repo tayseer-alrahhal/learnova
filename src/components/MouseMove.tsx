@@ -18,9 +18,8 @@ export default function MouseMove() {
 
     return (
         <div>
-            {/* Interactive Cursor */}
             <motion.div
-                className="max-md:hidden fixed w-10 h-10 border-2 border-[var(--color-primary)] rounded-full pointer-events-none z-50"
+                className="fixed w-10 h-10 border-2 border-[var(--color-primary)] rounded-full pointer-events-none z-50"
                 style={{
                     left: mousePosition.x - 16,
                     top: mousePosition.y - 16,

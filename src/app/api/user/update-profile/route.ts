@@ -7,9 +7,9 @@ import { NextResponse } from "next/server";
 
 
 export async function POST(request: Request) {
-    const { name, role, studentId, phone, bio, institution, program, location, avatar } = await request.json();
+    const { name, role, studentId, phone, bio, institution, program, location } = await request.json();
 
-    const validation = UpdateProfileSchema.safeParse({ name, role, studentId, phone, bio, institution, program, location, avatar });
+    const validation = UpdateProfileSchema.safeParse({ name, role, studentId, phone, bio, institution, program, location });
     if (!validation.success) {
         return NextResponse.json({ message: validation.error.errors[0].message }, { status: 400 });
     }
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 
         const user = await User.findOneAndUpdate(
             { email: session.user.email },
-            { $set: { name, role, studentId, phone, bio, institution, program, location, avatar, updatedAt: new Date() }, },
+            { $set: { name, role, studentId, phone, bio, institution, program, location, updatedAt: new Date() }, },
             { new: true }
         );
 

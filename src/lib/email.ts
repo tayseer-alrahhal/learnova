@@ -21,7 +21,6 @@ const createTransporter = () => {
   return transporter;
 };
 
-// Send email using the transporter
 export const sendEmail = async (payload: EmailPayload) => {
   const transporter = createTransporter();
   
@@ -38,7 +37,6 @@ export const sendEmail = async (payload: EmailPayload) => {
   }
 };
 
-// Generate verification email HTML template
 export const generateVerificationEmail = (userName: string, verificationUrl: string) => {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #F8FAFC; border-radius: 10px;">

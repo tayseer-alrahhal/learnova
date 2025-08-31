@@ -17,7 +17,6 @@ export async function GET(request: Request) {
   try {
     await connectToDatabase();
 
-    // Find the user with the verification token
     const user = await User.findOne({ verificationToken: token });
 
     if (!user) {
@@ -27,12 +26,10 @@ export async function GET(request: Request) {
       );
     }
 
-    // Mark user as verified by clearing the verification token and adding verified flag
     user.verificationToken = '';
     user.isVerified = true;
     await user.save();
 
-    // Redirect to successful verification page
     return NextResponse.redirect(new URL('/verify-success', request.url));
   } catch (error) {
     console.error("Email verification error:", error);
